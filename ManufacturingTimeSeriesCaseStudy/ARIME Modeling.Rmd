@@ -1,0 +1,92 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+plot(cars)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+```{r}
+data(AirPassengers)
+#This tells you that the data series is in a time series format
+class(AirPassengers)
+```
+
+```{r}
+#This is the start of the time series
+start(AirPassengers)
+```
+```{r}
+#This is the end of the time series
+end(AirPassengers)
+```
+
+```{r}
+frequency(AirPassengers)
+#The cycle of this time series is 12months in a year
+```
+
+```{r}
+summary(AirPassengers)
+```
+
+```{r}
+ plot(AirPassengers)
+```
+
+```{r}
+{
+plot(AirPassengers)
+abline(reg=lm(AirPassengers~time(AirPassengers)))
+}
+```
+
+```{r}
+cycle(AirPassengers)
+```
+```{r}
+plot(aggregate(AirPassengers,FUN=mean))
+```
+
+```{r}
+#Box plot across months will give us a sense on seasonal effect
+boxplot(AirPassengers~cycle(AirPassengers))
+```
+##Introduction to ARMA Time Series Modeling
+```{r}
+library(tseries)
+adf.test(diff(log(AirPassengers)), alternative="stationary", k=0)
+```
+
+```{r}
+#ACF plot
+acf(log(AirPassengers))
+```
+
+```{r}
+acf(diff(log(AirPassengers)))
+```
+
+```{r}
+pacf(diff(log(AirPassengers)))
+```
+
+```{r}
+(fit <- arima(log(AirPassengers), c(0, 1, 1),seasonal = list(order = c(0, 1, 1), period = 12)))
+```
+
+```{r}
+pred <- predict(fit, n.ahead = 10*12)
+```
+```{r}
+ts.plot(AirPassengers,2.718^pred$pred, log = "y", lty = c(1,3))
+```
+
